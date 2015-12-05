@@ -67,7 +67,7 @@ def main(args):
 
 
     if options.test_all:
-        programs = [re.findall(".*/([^.*]*).py", solution_file)[0]
+        programs = [re.findall(".*/([^.]*).py", solution_file)[0]
                  for solution_file in glob.glob("solutions/[!_]*.py")]
         for x in ignore_list():
             programs.remove(x)
