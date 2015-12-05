@@ -7,6 +7,7 @@ import re
 
 import common
 import colorama
+import traceback
 from colorama import Fore
 
 import time
@@ -59,6 +60,7 @@ def main(args):
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--test-all", action="store_true")
     parser.add_argument("--commit", action="store_true")
+    parser.add_argument("--stacktrace", action="store_true")
     parser.add_argument("program", nargs="?", default=None)
     parser.add_argument("filename", nargs="?", default=None)
     options = parser.parse_args(args)
@@ -79,7 +81,12 @@ def main(args):
         try:
             maybe_test_program(program, options.filename, options.test, options.commit)
         except Exception as e:
-            print red("Failure! "), e
+            print red("Failure! "), e,
+            if (options.stacktrace):
+                print ""
+                traceback.print_exc()
+            else:
+                print ""
 
 if __name__=="__main__":
     main(sys.argv[1:])
