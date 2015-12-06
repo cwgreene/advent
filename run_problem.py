@@ -57,12 +57,12 @@ def maybe_test_program(program, filename, should_test, should_commit):
 
 def main(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--test", action="store_true")
-    parser.add_argument("--test-all", action="store_true")
-    parser.add_argument("--commit", action="store_true")
-    parser.add_argument("--stacktrace", action="store_true")
-    parser.add_argument("program", nargs="?", default=None)
-    parser.add_argument("filename", nargs="?", default=None)
+    parser.add_argument("--test", action="store_true", help="Tests single program, compares to previously committed result.")
+    parser.add_argument("--test-all", action="store_true", help="Tests all programs, compares to previously committed results.")
+    parser.add_argument("--commit", action="store_true", help="Runs program, and commits result.")
+    parser.add_argument("--stacktrace", action="store_true", help="If an error occurs, give full stacktrace.")
+    parser.add_argument("program", nargs="?", default=None, help="Program to run")
+    parser.add_argument("filename", nargs="?", default=None, help="filename to use with executed program.")
     options = parser.parse_args(args)
 
 
