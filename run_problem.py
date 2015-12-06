@@ -59,6 +59,7 @@ def main(args):
     parser = argparse.ArgumentParser()
     parser.add_argument("--test", action="store_true", help="Tests single program, compares to previously committed result.")
     parser.add_argument("--test-all", action="store_true", help="Tests all programs, compares to previously committed results.")
+    parser.add_argument("--commit-all", action="store_true", help="Runs program, and commits result.")
     parser.add_argument("--commit", action="store_true", help="Runs program, and commits result.")
     parser.add_argument("--stacktrace", action="store_true", help="If an error occurs, give full stacktrace.")
     parser.add_argument("program", nargs="?", default=None, help="Program to run")
@@ -66,12 +67,11 @@ def main(args):
     options = parser.parse_args(args)
 
 
-    if options.test_all:
+    if options.test_all or options.commit_all:
         programs = [re.findall(".*/([^.]*).py", solution_file)[0]
                  for solution_file in glob.glob("solutions/[!_]*.py")]
         for x in ignore_list():
             programs.remove(x)
-        options.test = True
     elif options.program:
         programs = [options.program]
     else:
@@ -79,7 +79,10 @@ def main(args):
 
     for program in programs:
         try:
-            maybe_test_program(program, options.filename, options.test, options.commit)
+            maybe_test_program(program, 
+                    options.filename,
+                    options.test or options.test_all,
+                    options.commit or options.commit_all)
         except Exception as e:
             print red("Failure! "), e,
             if (options.stacktrace):
