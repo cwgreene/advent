@@ -4,7 +4,7 @@ Code repo for AdventOfCode.com solutions.
 
 use 
 
-  ./run_program --test-all
+    ./run_program --test-all
 
 to run all programs.
 
