@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import StringIO
-import glob
+import glob2 as glob
 import argparse
 import re
 
@@ -14,16 +14,24 @@ import time
 
 colorama.init()
 
-SOLUTION_FILE_FORMAT="dataset_solutions/advent_{}.solution.out"
+DATASET_FILE_FORMAT="datasets/{}/advent_{}.txt"
+SOLUTION_FILE_FORMAT="dataset_solutions/{}/advent_{}.solution.out"
 
 def red(string): return Fore.RED+string+Fore.RESET
 def green(string): return Fore.GREEN+string+Fore.RESET
 
+def program_decomp(program):
+    split_program = program.split(".")
+    year = split_program[0]
+    program = split_program[-1]
+    return year, program
+
 def run_program(program, filename):
     if filename:
         common.set_filename(filename)
-    else: 
-        common.set_filename("datasets/advent_%s.txt" % program)
+    else:
+        year, p = program_decomp(program) 
+        common.set_filename(DATASET_FILE_FORMAT.format(year, p))
     __import__("solutions."+program)
 
 def ignore_list():
@@ -43,7 +51,8 @@ def maybe_test_program(program, filename, should_test, should_commit):
         if should_test:
             sys.stdout.seek(0)
             output = sys.stdout.read()
-            solution = open(SOLUTION_FILE_FORMAT.format(program)).read()
+            year, program = program_decomp(program)
+            solution = open(SOLUTION_FILE_FORMAT.format(year, program)).read()
             sys.stdout = actual_stdout
             if output.strip() != solution.strip():
                 raise Exception("Does not match solution")
@@ -68,8 +77,9 @@ def main(args):
 
 
     if options.test_all or options.commit_all:
-        programs = [re.findall(".*/([^.]*).py", solution_file)[0]
-                 for solution_file in glob.glob("solutions/[!_]*.py")]
+        programs = [re.findall(".*[^/]*/(a[0-9]*/[^.]*).py", solution_file)[0].replace("/", ".")
+                 for solution_file in glob.glob("solutions/**/day*.py")]
+        print programs
         for x in ignore_list():
             programs.remove(x)
     elif options.program:
