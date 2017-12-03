@@ -39,6 +39,7 @@ def ignore_list():
 
 def maybe_test_program(program, filename, should_test, should_commit):
     actual_stdout = sys.stdout
+    year, p = program_decomp(program)
     try:
         if should_test:
             start_time = time.time()
@@ -51,14 +52,13 @@ def maybe_test_program(program, filename, should_test, should_commit):
         if should_test:
             sys.stdout.seek(0)
             output = sys.stdout.read()
-            year, program = program_decomp(program)
-            solution = open(SOLUTION_FILE_FORMAT.format(year, program)).read()
+            solution = open(SOLUTION_FILE_FORMAT.format(year, p)).read()
             sys.stdout = actual_stdout
             if output.strip() != solution.strip():
                 raise Exception("Does not match solution")
             print green("Test pass!"), "({0:.2f} ms)".format(1000*(time.time() - start_time))
         if should_commit:
-            output = open(SOLUTION_FILE_FORMAT.format(program), "w")
+            output = open(SOLUTION_FILE_FORMAT.format(year, p), "w")
             sys.stdout.seek(0)
             output.write(sys.stdout.read())
     finally:
@@ -79,7 +79,6 @@ def main(args):
     if options.test_all or options.commit_all:
         programs = [re.findall(".*[^/]*/(a[0-9]*/[^.]*).py", solution_file)[0].replace("/", ".")
                  for solution_file in glob.glob("solutions/**/day*.py")]
-        print programs
         for x in ignore_list():
             programs.remove(x)
     elif options.program:
